@@ -1,0 +1,5 @@
+[     485ms] [ERROR] Permissions policy violation: gyroscope is not allowed in this document. @ https://g.alicdn.com/secdev/sufei_data/3.9.14/index.js:0
+[     485ms] [ERROR] Permissions policy violation: accelerometer is not allowed in this document. @ https://g.alicdn.com/secdev/sufei_data/3.9.14/index.js:0
+[     485ms] [WARNING] The deviceorientation events are blocked by permissions policy. See https://github.com/w3c/webappsec-permissions-policy/blob/master/features.md#sensor-features @ https://g.alicdn.com/secdev/sufei_data/3.9.14/index.js:0
+[    8673ms] [WARNING] The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet) @ https://g.alicdn.com/AWSC/fireyejs/1.231.69/fireyejs.js:0
+[    8677ms] [WARNING] The ScriptProcessorNode is deprecated. Use AudioWorkletNode instead. (https://bit.ly/audio-worklet) @ https://g.alicdn.com/AWSC/uab/1.140.0/collina.js:8

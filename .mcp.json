@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "gpca-card-manager": {
+      "command": "node",
+      "args": ["/Users/mooling/Projects/gpca/gpca-mcp-server/dist/index.js"],
+      "type": "stdio"
+    }
+  }
+}
