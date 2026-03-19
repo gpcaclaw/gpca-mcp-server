@@ -523,7 +523,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       name: "gpca_view_all_tickets",
       description:
         "List all support tickets/messages created by the user.",
-      inputSchema: { type: "object" as const, properties: {} },
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          page: {
+            type: "number",
+            description: "Page number (0-based, defaults to 0)",
+          },
+        },
+      },
     },
     {
       name: "gpca_get_ticket_detail",
@@ -856,7 +864,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       // Tickets
       case "gpca_view_all_tickets":
-        result = await gpca_view_all_tickets();
+        result = await gpca_view_all_tickets(args?.page as number | undefined);
         break;
       case "gpca_get_ticket_detail":
         result = await gpca_get_ticket_detail(args!.ticket_id as string);

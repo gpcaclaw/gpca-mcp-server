@@ -7,6 +7,14 @@ export async function gpca_wallet_balance() {
 
   try {
     const res = await apiClient.get("/wallet/get_wallet_balance");
+    if (res.status === "ok") {
+      const balance = typeof res.data === "number" ? res.data : parseFloat(res.data) || 0;
+      return {
+        success: true,
+        data: { balance, currency: "USDT" },
+        message: `Wallet balance: ${balance} USDT`,
+      };
+    }
     return handleResponse(res);
   } catch (error) {
     return handleError(error);
@@ -81,7 +89,11 @@ export async function gpca_wallet_transactions(
   }
 
   try {
-    const params: Record<string, string> = { start_time };
+    const params: Record<string, any> = {
+      start_time,
+      page: 0,
+      count: 20,
+    };
     if (end_time) params.end_time = end_time;
     const res = await apiClient.get("/wallet/get_wallet_transactions", params);
     return handleResponse(res);

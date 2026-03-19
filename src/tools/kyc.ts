@@ -1,5 +1,6 @@
 import { apiClient } from "../api-client.js";
 import { checkAuth, handleResponse, handleError, type ToolResult } from "../utils.js";
+import { resetSession } from "../session.js";
 import { autoConvertKycFields, containsChinese, addressToPinyin, nameToPinyin } from "../pinyin.js";
 import { compressKycImages } from "../image.js";
 
@@ -28,7 +29,6 @@ export async function gpca_check_kyc() {
   try {
     const res = await apiClient.get("/user/check_user_kyc");
     if (res.status === "re_login") {
-      const { resetSession } = await import("../session.js");
       resetSession();
       return { success: false, message: "Session expired. Please login again." };
     }

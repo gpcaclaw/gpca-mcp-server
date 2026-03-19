@@ -1,12 +1,15 @@
 import { apiClient } from "../api-client.js";
 import { checkAuth, handleResponse, handleError } from "../utils.js";
 
-export async function gpca_view_all_tickets() {
+export async function gpca_view_all_tickets(page?: number) {
   const authErr = checkAuth();
   if (authErr) return { success: false, message: authErr };
 
   try {
-    const res = await apiClient.get("/ticket/view_all_ticket");
+    const res = await apiClient.get("/ticket/view_all_ticket", {
+      page: page ?? 0,
+      count: 10,
+    });
     return handleResponse(res);
   } catch (error) {
     return handleError(error);
@@ -19,7 +22,7 @@ export async function gpca_get_ticket_detail(ticket_id: string) {
 
   try {
     const res = await apiClient.get("/ticket/get_ticket_detail", {
-      ticket_id,
+      tid: ticket_id,
     });
     return handleResponse(res);
   } catch (error) {
