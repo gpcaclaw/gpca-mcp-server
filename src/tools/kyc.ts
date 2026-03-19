@@ -3,8 +3,23 @@ import { checkAuth, handleResponse, handleError, type ToolResult } from "../util
 import { autoConvertKycFields, containsChinese, addressToPinyin, nameToPinyin } from "../pinyin.js";
 import { compressKycImages } from "../image.js";
 
+const KYC_TYPE_LABELS: Record<number, string> = {
+  1: "Mastercard",
+  2: "Visa",
+  3: "Virtual Card",
+};
+
+const KYC_STATUS_LABELS: Record<number, string> = {
+  0: "not_started",
+  1: "info_submitted",
+  2: "under_review",
+  3: "rejected",
+  4: "approved",
+};
+
 /**
  * Check KYC verification status.
+ * Returns parsed status with human-readable labels.
  */
 export async function gpca_check_kyc() {
   const authErr = checkAuth();
@@ -12,7 +27,38 @@ export async function gpca_check_kyc() {
 
   try {
     const res = await apiClient.get("/user/check_user_kyc");
-    return handleResponse(res);
+    if (res.status === "re_login") {
+      const { resetSession } = await import("../session.js");
+      resetSession();
+      return { success: false, message: "Session expired. Please login again." };
+    }
+    if (res.status !== "ok") {
+      return {
+        success: false,
+        message: res.data?.errorMessage ?? res.data ?? "Failed to check KYC",
+      };
+    }
+
+    const entries = Array.isArray(res.data) ? res.data : [];
+    const parsed = entries.map((item: any) => ({
+      card_type: KYC_TYPE_LABELS[item.api_type] ?? `type_${item.api_type}`,
+      status: KYC_STATUS_LABELS[item.status] ?? `status_${item.status}`,
+      status_code: item.status,
+      api_type: item.api_type,
+      holder_id: item.holder_id,
+      refuse_reason: item.refuse_message || null,
+      updated_at: item.update_time,
+    }));
+
+    const summary = parsed
+      .map((p: any) => `${p.card_type}: ${p.status}${p.refuse_reason ? ` (reason: ${p.refuse_reason})` : ""}`)
+      .join("\n");
+
+    return {
+      success: true,
+      data: parsed,
+      message: `KYC Status:\n${summary}`,
+    };
   } catch (error) {
     return handleError(error);
   }
